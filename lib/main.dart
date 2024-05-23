@@ -191,56 +191,110 @@ class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
 
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(title: const Text('Super Jogo da Velha')),
-    body: Column(
-      children: [
-        Expanded( // Tabuleiro principal ocupa o espaço disponível
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: GridView.count(
-              key: const Key('tabuleiroPrincipal'),
-              crossAxisCount: 3,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              children: List.generate(9, (index) {
-                int linha = index ~/ 3;
-                int coluna = index % 3;
-                return buildMiniTabuleiro(linha, coluna);
-              }),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Super Jogo da Velha'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: reiniciarJogo,
           ),
-        ),
-        _buildInstrucoesJogador(), // Widget para as instruções e jogador atual
-      ],
-    ),
-  );
-}
+          IconButton( // Botão de instruções na AppBar
+            icon: const Icon(Icons.help),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Como Jogar'),
+                    content: const SingleChildScrollView(
+                      child: Text(
+                        '- O objetivo é vencer 3 mini jogos da velha em linha.\n'
+                        '- A primeira jogada é livre.\n'
+                        '- As jogadas seguintes devem ser feitas no mini tabuleiro correspondente à posição da jogada anterior.\n'
+                        '- Se o mini tabuleiro estiver completo, a próxima jogada é livre.',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Fechar'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          double tamanhoTabuleiro = constraints.maxWidth;
+          if (tamanhoTabuleiro > constraints.maxHeight) {
+            tamanhoTabuleiro = constraints.maxHeight;
+          }
 
-Widget _buildInstrucoesJogador() {
-  return Container(
-    padding: const EdgeInsets.all(5),
-    alignment: Alignment.center,
-    height: 230, // Define a altura igual à do tabuleiro principal (aproximadamente)
-    color: Colors.grey[200],
-    child: Column( // Coluna para organizar as instruções e o jogador atual
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribui o espaço verticalmente
-      children: [
-        const Text(
-          'Como Jogar:\n\n'
-          '- O objetivo é vencer 3 mini jogos da velha em linha.\n'
-          '- A primeira jogada é livre.\n'
-          '- As jogadas seguintes devem ser feitas no mini tabuleiro correspondente à posição da jogada anterior.\n'
-          '- Se o mini tabuleiro estiver completo, a próxima jogada é livre.',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16),
-        ),
-        Text(
-          'Jogador Atual: $jogadorAtual',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ],
-    ),
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: tamanhoTabuleiro,
+                maxHeight: tamanhoTabuleiro,
+              ),
+              child: Container(
+                width: tamanhoTabuleiro,
+                height: tamanhoTabuleiro,
+                padding: const EdgeInsets.all(10),
+                child: GridView.count(
+                  key: const Key('tabuleiroPrincipal'),
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  children: List.generate(9, (index) {
+                    int linha = index ~/ 3;
+                    int coluna = index % 3;
+                    return buildMiniTabuleiro(linha, coluna);
+                  }),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+
+
+Widget buildBotaoInstrucoes() {
+  return ElevatedButton(
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Como Jogar'),
+            content: const SingleChildScrollView( // Permite rolagem no diálogo
+              child: Text(
+                '- O objetivo é vencer 3 mini jogos da velha em linha.\n'
+                '- A primeira jogada é livre.\n'
+                '- As jogadas seguintes devem ser feitas no mini tabuleiro correspondente à posição da jogada anterior.\n'
+                '- Se o mini tabuleiro estiver completo, a próxima jogada é livre.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+    child: const Text('Instruções'),
   );
 }
 
@@ -270,15 +324,16 @@ Widget _buildInstrucoesJogador() {
                 borderRadius: BorderRadius.circular(10),
                 side: const BorderSide(color: Colors.black, width: 1),
               ),
-              padding: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(.5),
             ),
             onPressed: jogoTerminado || !tabuleiroPermitido
               ? null
               : () => fazerJogada(linha, coluna, posicao),
             child: Text(
               simbolo,
-              style: const TextStyle(
-                fontSize: 28,
+              style: TextStyle(
+                //fontSize: 28,
+                fontSize: MediaQuery.of(context).size.width / 18,
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.bold,
                 color: Colors.black, // Cor do texto definida explicitamente
