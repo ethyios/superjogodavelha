@@ -14,8 +14,8 @@ class TelaPrincipal extends StatelessWidget {
           children: [
             Image.asset(
               'assets/ic_launcher.png', // Caminho para o ícone do jogo
-              width: 100, // Largura do ícone
-              height: 100, // Altura do ícone
+              width: 150, // Largura do ícone
+              height: 150, // Altura do ícone
             ),
             const SizedBox(height: 20),
             Text(
