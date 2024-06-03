@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'jogo_main_old.dart'; // Importe a página do jogo
+import 'jogo.dart';
 
 class TelaPrincipal extends StatelessWidget {
   const TelaPrincipal({super.key});
@@ -18,19 +18,10 @@ class TelaPrincipal extends StatelessWidget {
               height: 150, // Altura do ícone
             ),
             const SizedBox(height: 20),
-            Text(
-              'Super Jogo da Velha',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor, // Cor primária do tema
-                shadows: const [
-                  Shadow(
-                    color: Colors.black12,
-                    blurRadius: 5,
-                    offset: Offset(2, 2),
-                  ),
-                ],
+            const Text(
+              'Super Jogo da Velha', style: TextStyle(
+                fontFamily: 'Schyler',
+                fontWeight: FontWeight.bold
               ),
             ),
             const SizedBox(height: 20),

@@ -1,17 +1,5 @@
 import 'package:flutter/material.dart';
 
-class SuperJogoDaVelhaApp extends StatelessWidget {
-  const SuperJogoDaVelhaApp({super.key});
-  
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Super Jogo da Velha',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const SuperJogoDaVelhaPage(),
-    );
-  }
-}
 
 class SuperJogoDaVelhaPage extends StatefulWidget {
   const SuperJogoDaVelhaPage({super.key});
@@ -327,9 +315,9 @@ Widget buildBotaoInstrucoes() {
               : () => fazerJogada(linha, coluna, posicao),
             child: Text(
               simbolo,
-              style: TextStyle(
-                //fontSize: 28,
-                fontSize: MediaQuery.of(context).size.width / 18,
+              style: const TextStyle(
+                fontSize: 28,
+                //fontSize: MediaQuery.of(context).size.width / 18,
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.bold,
                 color: Colors.black, // Cor do texto definida explicitamente
