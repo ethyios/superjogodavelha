@@ -290,7 +290,7 @@ Widget buildBotaoInstrucoes() {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black, width: 2),
-        color: tabuleiroPermitido ? getCorCelula(linha, coluna) : Colors.grey[200],
+        color: tabuleiroPermitido ? getCorCelula(linha, coluna, context) : Colors.grey[200],
       ),
       child: GridView.count(
         crossAxisCount: 3,
@@ -303,7 +303,7 @@ Widget buildBotaoInstrucoes() {
 
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: getCorCelula(linha, coluna),
+              backgroundColor: getCorCelula(linha, coluna, context),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
                 side: const BorderSide(color: Colors.black, width: 1),
@@ -329,23 +329,24 @@ Widget buildBotaoInstrucoes() {
     );
   }
 
-  Color getCorCelula(int linha, int coluna) {
+    Color getCorCelula(int linha, int coluna, BuildContext context) { // Adicionamos o BuildContext
     if (vencedoresMiniTabuleiros[linha][coluna] != '') {
-      return Colors.grey[300]!; // Cor mais escura para tabuleiro vencido/empatado
+      return Theme.of(context).disabledColor; // Cor de desabilitação do tema atual
     } else {
-      // Cores pastel mais claras (aproximadamente 30% mais claras)
+      // Paleta de cores com bom contraste em modos claro e escuro
       List<Color> cores = [
-        const Color.fromRGBO(225, 245, 254, 1), // Azul claro
-        const Color.fromRGBO(224, 250, 224, 1), // Verde claro
-        const Color.fromRGBO(255, 228, 225, 1), // Rosa claro
-        const Color.fromRGBO(255, 242, 204, 1), // Laranja claro
-        const Color.fromRGBO(240, 230, 245, 1), // Roxo claro
-        const Color.fromRGBO(255, 255, 224, 1), // Amarelo claro
-        const Color.fromRGBO(204, 245, 240, 1), // Teal claro
-        const Color.fromRGBO(245, 222, 179, 1), // Marrom claro
-        const Color.fromRGBO(240, 240, 240, 1), // Cinza claro
+        Colors.blue[200]!,  // Azul claro
+        Colors.green[200]!, // Verde claro
+        Colors.pink[200]!,  // Rosa claro
+        Colors.orange[200]!, // Laranja claro
+        Colors.purple[200]!, // Roxo claro
+        Colors.yellow[200]!, // Amarelo claro
+        Colors.teal[200]!,  // Teal claro
+        Colors.brown[200]!, // Marrom claro
+        Colors.grey[500]!,  // Cinza claro
       ];
-      return cores[linha * 3 + coluna]; // Retorna a cor correta para tabuleiro em andamento
+
+      return cores[linha * 3 + coluna]; 
     }
   }
 }
