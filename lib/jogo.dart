@@ -9,6 +9,8 @@ class SuperJogoDaVelhaPage extends StatefulWidget {
 }
 
 class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
+  bool primeiroTurno = true; 
+
   List<List<List<String>>> tabuleiro =
       List.generate(3, (_) => List.generate(3, (_) => List.filled(9, '')));
   List<List<String>> vencedoresMiniTabuleiros =
@@ -30,7 +32,7 @@ class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
         vencedoresMiniTabuleiros[linha][coluna] = vencedorMiniTabuleiro;
         preencherMiniTabuleiro(linha, coluna, vencedorMiniTabuleiro);
       }
-
+      primeiroTurno = false;
       calcularProximoMiniTabuleiro(linha, coluna, posicao);
 
       // Verifica se o jogo terminou após a jogada
@@ -71,12 +73,13 @@ class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
       jogadorAtual = 'X';
       proximoMiniTabuleiroLinha = -1;
       proximoMiniTabuleiroColuna = -1;
+      primeiroTurno = true;
     });
   }
 
   void calcularProximoMiniTabuleiro(int linha, int coluna, int posicao) {
-    if (vencedoresMiniTabuleiros[linha][coluna] != '') {
-      // Se o mini tabuleiro atual já estiver decidido, permite jogar em qualquer lugar
+    if (primeiroTurno) {
+      // Jogada livre apenas no primeiro turno ou se o minitabuleiro já tiver um vencedor
       proximoMiniTabuleiroLinha = -1;
       proximoMiniTabuleiroColuna = -1;
     } else {
@@ -329,7 +332,7 @@ Widget buildBotaoInstrucoes() {
     );
   }
 
-    Color getCorCelula(int linha, int coluna, BuildContext context) { // Adicionamos o BuildContext
+  Color getCorCelula(int linha, int coluna, BuildContext context) { // Adicionamos o BuildContext
     if (vencedoresMiniTabuleiros[linha][coluna] != '') {
       return Theme.of(context).disabledColor; // Cor de desabilitação do tema atual
     } else {
