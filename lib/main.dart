@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'tema.dart';
-import 'jogo_tela.dart';
+import 'ui/jogo_tela.dart';
 
 void main() {
   runApp(const SuperJogoDaVelhaApp());

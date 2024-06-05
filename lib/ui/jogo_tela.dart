@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'jogo_logica.dart';
-import 'jogo_ia.dart';
+import '../controle/jogo_controle.dart';
+import 'mini_tabuleiro_tela.dart';
 
 class SuperJogoDaVelhaPage extends StatefulWidget {
   final bool modoIA;
@@ -11,37 +11,22 @@ class SuperJogoDaVelhaPage extends StatefulWidget {
 }
 
 class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
-  final SuperJogoDaVelhaLogica jogoLogica = SuperJogoDaVelhaLogica();
-  final JogoIA jogoIA = JogoIA();
+  final JogoController jogoController = JogoController();
 
   void fazerJogada(int linha, int coluna, int posicao) {
     setState(() {
-      jogoLogica.fazerJogada(linha, coluna, posicao);
-      String vencedor = jogoLogica.verificarVencedorSuperTabuleiro();
-      if (vencedor != '') {
-        mostrarResultado(vencedor);
-        return;
-      }
-
-      if (widget.modoIA && jogoLogica.jogadorAtual == 'O') {
-        int jogadaIA = jogoIA.escolherJogada(jogoLogica);
-        if (jogadaIA != -1) {
-          int linhaIA = jogadaIA ~/ 27;
-          int colunaIA = (jogadaIA % 27) ~/ 9;
-          int posicaoIA = jogadaIA % 9;
-          jogoLogica.fazerJogada(linhaIA, colunaIA, posicaoIA);
-          vencedor = jogoLogica.verificarVencedorSuperTabuleiro();
-          if (vencedor != '') {
-            mostrarResultado(vencedor);
-          }
-        }
-      }
+      jogoController.fazerJogada(linha, coluna, posicao, widget.modoIA);
     });
+
+    String vencedor = jogoController.verificarVencedorSuperTabuleiro();
+    if (vencedor != '') {
+      mostrarResultado(vencedor);
+    }
   }
 
   void reiniciarJogo() {
     setState(() {
-      jogoLogica.reiniciarJogo();
+      jogoController.reiniciarJogo();
     });
   }
 
@@ -131,7 +116,12 @@ class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
                   children: List.generate(9, (index) {
                     int linha = index ~/ 3;
                     int coluna = index % 3;
-                    return buildMiniTabuleiro(linha, coluna);
+                    return MiniTabuleiroTela(
+                      linha: linha,
+                      coluna: coluna,
+                      jogoLogica: jogoController.jogoLogica,
+                      onJogada: fazerJogada,
+                    );
                   }),
                 ),
               ),
@@ -140,71 +130,5 @@ class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
         },
       ),
     );
-  }
-
-  Widget buildMiniTabuleiro(int linha, int coluna) {
-    bool tabuleiroPermitido =
-        (linha == jogoLogica.proximoMiniTabuleiroLinha && coluna == jogoLogica.proximoMiniTabuleiroColuna) ||
-        (jogoLogica.proximoMiniTabuleiroLinha == -1);
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black, width: 2),
-        color: tabuleiroPermitido ? getCorCelula(linha, coluna, context) : Colors.grey[200],
-      ),
-      child: GridView.count(
-        crossAxisCount: 3,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: List.generate(9, (index) {
-          int posicao = index;
-          String simbolo = jogoLogica.tabuleiro[linha][coluna][posicao];
-          bool jogoTerminado = jogoLogica.vencedoresMiniTabuleiros[linha][coluna] != '';
-
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: getCorCelula(linha, coluna, context),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: const BorderSide(color: Colors.black, width: 1),
-              ),
-              padding: const EdgeInsets.all(.5),
-            ),
-            onPressed: jogoTerminado || !tabuleiroPermitido
-                ? null
-                : () => fazerJogada(linha, coluna, posicao),
-            child: Text(
-              simbolo,
-              style: const TextStyle(
-                fontSize: 28,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-
-  Color getCorCelula(int linha, int coluna, BuildContext context) {
-    if (jogoLogica.vencedoresMiniTabuleiros[linha][coluna] != '') {
-      return Theme.of(context).disabledColor;
-    } else {
-      List<Color> cores = [
-        Colors.blue[200]!,
-        Colors.green[200]!,
-        Colors.pink[200]!,
-        Colors.orange[200]!,
-        Colors.purple[200]!,
-        Colors.yellow[200]!,
-        Colors.teal[200]!,
-        Colors.brown[200]!,
-        Colors.grey[500]!,
-      ];
-
-      return cores[linha * 3 + coluna];
-    }
   }
 }
