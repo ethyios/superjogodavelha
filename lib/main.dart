@@ -59,7 +59,10 @@ class TelaPrincipal extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Aqui você pode implementar a lógica para iniciar o Modo IA
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SuperJogoDaVelhaPage(modoIA: true)),
+                );
               },
               child: const Text('Modo IA'),
             ),

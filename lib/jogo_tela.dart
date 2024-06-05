@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'jogo_logica.dart';
+import 'jogo_ia.dart';
 
 class SuperJogoDaVelhaPage extends StatefulWidget {
-  const SuperJogoDaVelhaPage({super.key});
+  final bool modoIA;
+  const SuperJogoDaVelhaPage({super.key, this.modoIA = false});
 
   @override
   SuperJogoDaVelhaPageState createState() => SuperJogoDaVelhaPageState();
@@ -10,6 +12,7 @@ class SuperJogoDaVelhaPage extends StatefulWidget {
 
 class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
   final SuperJogoDaVelhaLogica jogoLogica = SuperJogoDaVelhaLogica();
+  final JogoIA jogoIA = JogoIA();
 
   void fazerJogada(int linha, int coluna, int posicao) {
     setState(() {
@@ -17,6 +20,21 @@ class SuperJogoDaVelhaPageState extends State<SuperJogoDaVelhaPage> {
       String vencedor = jogoLogica.verificarVencedorSuperTabuleiro();
       if (vencedor != '') {
         mostrarResultado(vencedor);
+        return;
+      }
+
+      if (widget.modoIA && jogoLogica.jogadorAtual == 'O') {
+        int jogadaIA = jogoIA.escolherJogada(jogoLogica);
+        if (jogadaIA != -1) {
+          int linhaIA = jogadaIA ~/ 27;
+          int colunaIA = (jogadaIA % 27) ~/ 9;
+          int posicaoIA = jogadaIA % 9;
+          jogoLogica.fazerJogada(linhaIA, colunaIA, posicaoIA);
+          vencedor = jogoLogica.verificarVencedorSuperTabuleiro();
+          if (vencedor != '') {
+            mostrarResultado(vencedor);
+          }
+        }
       }
     });
   }
