@@ -1,14 +1,15 @@
-import '../logica/jogo_logica.dart';
-import '../controle/jogo_controle.dart';
+import 'package:superjogodavelha/controle/jogo_controle.dart';
+import 'package:superjogodavelha/logica/jogo_logica.dart';
 
 class JogoIA {
   final JogoController jogoController;
+  final Map<String, int> memo = {};
 
   JogoIA(this.jogoController);
 
   String jogadorIA = 'O';
   String jogadorHumano = 'X';
-  int profundidadeMaxima = 3;
+  int profundidadeMaxima = 9*9;
 
   void fazerJogadaIA() {
     int melhorJogada = escolherJogada(jogoController.jogoLogica);
@@ -25,13 +26,15 @@ class JogoIA {
     int melhorJogada = -1;
 
     if (jogoLogica.proximoMiniTabuleiroLinha != -1 && jogoLogica.proximoMiniTabuleiroColuna != -1) {
-      melhorJogada = avaliarMiniTabuleiro(jogoLogica, jogoLogica.proximoMiniTabuleiroLinha, jogoLogica.proximoMiniTabuleiroColuna, melhorValor);
+      melhorJogada = avaliarPosicoesNoMiniTabuleiro(jogoLogica, jogoLogica.proximoMiniTabuleiroLinha, jogoLogica.proximoMiniTabuleiroColuna, melhorValor);
     } else {
       for (int linha = 0; linha < 3; linha++) {
         for (int coluna = 0; coluna < 3; coluna++) {
-          int jogadaAtual = avaliarMiniTabuleiro(jogoLogica, linha, coluna, melhorValor);
-          if (jogadaAtual != -1 && jogoLogica.tabuleiro[linha][coluna][jogadaAtual % 9] == '') {
-            melhorJogada = jogadaAtual;
+          if (jogoLogica.vencedoresMiniTabuleiros[linha][coluna] == '') {
+            int jogadaAtual = avaliarPosicoesNoMiniTabuleiro(jogoLogica, linha, coluna, melhorValor);
+            if (jogadaAtual != -1 && jogoLogica.tabuleiro[linha][coluna][jogadaAtual % 9] == '') {
+              melhorJogada = jogadaAtual;
+            }
           }
         }
       }
@@ -40,7 +43,7 @@ class JogoIA {
     return melhorJogada;
   }
 
-  int avaliarMiniTabuleiro(SuperJogoDaVelhaLogica jogoLogica, int linha, int coluna, int melhorValor) {
+  int avaliarPosicoesNoMiniTabuleiro(SuperJogoDaVelhaLogica jogoLogica, int linha, int coluna, int melhorValor) {
     int melhorJogada = -1;
     for (int posicao = 0; posicao < 9; posicao++) {
       if (jogoLogica.tabuleiro[linha][coluna][posicao] == '') {
@@ -106,6 +109,11 @@ class JogoIA {
   }
 
   int minimax(SuperJogoDaVelhaLogica jogoLogica, int profundidade, bool isMax, int alpha, int beta) {
+    String estadoAtual = estadoTabuleiro(jogoLogica);
+    if (memo.containsKey(estadoAtual)) {
+      return memo[estadoAtual]!;
+    }
+
     if (profundidade >= profundidadeMaxima) return 0;
 
     String resultado = jogoLogica.verificarVencedorSuperTabuleiro();
@@ -117,35 +125,41 @@ class JogoIA {
       int melhorValor = -1000;
       for (int linha = 0; linha < 3; linha++) {
         for (int coluna = 0; coluna < 3; coluna++) {
-          for (int posicao = 0; posicao < 9; posicao++) {
-            if (jogoLogica.tabuleiro[linha][coluna][posicao] == '') {
-              jogoLogica.tabuleiro[linha][coluna][posicao] = jogadorIA;
-              int pontuacao = calcularPontuacao(jogoLogica, linha, coluna, posicao);
-              melhorValor = max(melhorValor, minimax(jogoLogica, profundidade + 1, false, alpha, beta) + pontuacao);
-              jogoLogica.tabuleiro[linha][coluna][posicao] = '';
-              alpha = max(alpha, melhorValor);
-              if (beta <= alpha) break;
+          if (jogoLogica.vencedoresMiniTabuleiros[linha][coluna] == '') {
+            for (int posicao = 0; posicao < 9; posicao++) {
+              if (jogoLogica.tabuleiro[linha][coluna][posicao] == '') {
+                jogoLogica.tabuleiro[linha][coluna][posicao] = jogadorIA;
+                int pontuacao = calcularPontuacao(jogoLogica, linha, coluna, posicao);
+                melhorValor = max(melhorValor, minimax(jogoLogica, profundidade + 1, false, alpha, beta) + pontuacao);
+                jogoLogica.tabuleiro[linha][coluna][posicao] = '';
+                alpha = max(alpha, melhorValor);
+                if (beta <= alpha) break;
+              }
             }
           }
         }
       }
+      memo[estadoAtual] = melhorValor;
       return melhorValor;
     } else {
       int melhorValor = 1000;
       for (int linha = 0; linha < 3; linha++) {
         for (int coluna = 0; coluna < 3; coluna++) {
-          for (int posicao = 0; posicao < 9; posicao++) {
-            if (jogoLogica.tabuleiro[linha][coluna][posicao] == '') {
-              jogoLogica.tabuleiro[linha][coluna][posicao] = jogadorHumano;
-              int pontuacao = calcularPontuacao(jogoLogica, linha, coluna, posicao);
-              melhorValor = min(melhorValor, minimax(jogoLogica, profundidade + 1, true, alpha, beta) - pontuacao);
-              jogoLogica.tabuleiro[linha][coluna][posicao] = '';
-              beta = min(beta, melhorValor);
-              if (beta <= alpha) break;
+          if (jogoLogica.vencedoresMiniTabuleiros[linha][coluna] == '') {
+            for (int posicao = 0; posicao < 9; posicao++) {
+              if (jogoLogica.tabuleiro[linha][coluna][posicao] == '') {
+                jogoLogica.tabuleiro[linha][coluna][posicao] = jogadorHumano;
+                int pontuacao = calcularPontuacao(jogoLogica, linha, coluna, posicao);
+                melhorValor = min(melhorValor, minimax(jogoLogica, profundidade + 1, true, alpha, beta) - pontuacao);
+                jogoLogica.tabuleiro[linha][coluna][posicao] = '';
+                beta = min(beta, melhorValor);
+                if (beta <= alpha) break;
+              }
             }
           }
         }
       }
+      memo[estadoAtual] = melhorValor;
       return melhorValor;
     }
   }
@@ -153,4 +167,16 @@ class JogoIA {
   int max(int a, int b) => (a > b) ? a : b;
 
   int min(int a, int b) => (a < b) ? a : b;
+
+  String estadoTabuleiro(SuperJogoDaVelhaLogica jogoLogica) {
+    String estado = '';
+    for (var linha in jogoLogica.tabuleiro) {
+      for (var coluna in linha) {
+        for (var celula in coluna) {
+          estado += celula;
+        }
+      }
+    }
+    return estado;
+  }
 }
