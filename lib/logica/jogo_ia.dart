@@ -9,7 +9,7 @@ class JogoIA {
 
   String jogadorIA = 'O';
   String jogadorHumano = 'X';
-  int profundidadeMaxima = 9*9;
+  int profundidadeMaxima = 90*9;
 
   void fazerJogadaIA() {
     int melhorJogada = escolherJogada(jogoController.jogoLogica);
