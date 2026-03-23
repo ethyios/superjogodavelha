@@ -22,19 +22,17 @@ class JogoIA {
   }
 
   int escolherJogada(SuperJogoDaVelhaLogica jogoLogica) {
-    int melhorValor = -1001;
+    int melhorValor = -1000;
     int melhorJogada = -1;
 
     if (jogoLogica.proximoMiniTabuleiroLinha != -1 && jogoLogica.proximoMiniTabuleiroColuna != -1) {
-      var (jogada, valor) = avaliarPosicoesNoMiniTabuleiro(jogoLogica, jogoLogica.proximoMiniTabuleiroLinha, jogoLogica.proximoMiniTabuleiroColuna, melhorValor);
-      melhorJogada = jogada;
+      melhorJogada = avaliarPosicoesNoMiniTabuleiro(jogoLogica, jogoLogica.proximoMiniTabuleiroLinha, jogoLogica.proximoMiniTabuleiroColuna, melhorValor);
     } else {
       for (int linha = 0; linha < 3; linha++) {
         for (int coluna = 0; coluna < 3; coluna++) {
           if (jogoLogica.vencedoresMiniTabuleiros[linha][coluna] == '') {
-            var (jogadaAtual, valorAtual) = avaliarPosicoesNoMiniTabuleiro(jogoLogica, linha, coluna, melhorValor);
-            if (jogadaAtual != -1 && valorAtual > melhorValor) {
-              melhorValor = valorAtual;
+            int jogadaAtual = avaliarPosicoesNoMiniTabuleiro(jogoLogica, linha, coluna, melhorValor);
+            if (jogadaAtual != -1 && jogoLogica.tabuleiro[linha][coluna][jogadaAtual % 9] == '') {
               melhorJogada = jogadaAtual;
             }
           }
@@ -45,9 +43,8 @@ class JogoIA {
     return melhorJogada;
   }
 
-  (int, int) avaliarPosicoesNoMiniTabuleiro(SuperJogoDaVelhaLogica jogoLogica, int linha, int coluna, int melhorValorBase) {
+  int avaliarPosicoesNoMiniTabuleiro(SuperJogoDaVelhaLogica jogoLogica, int linha, int coluna, int melhorValor) {
     int melhorJogada = -1;
-    int melhorValor = melhorValorBase;
     for (int posicao = 0; posicao < 9; posicao++) {
       if (jogoLogica.tabuleiro[linha][coluna][posicao] == '') {
         jogoLogica.tabuleiro[linha][coluna][posicao] = jogadorIA;
@@ -59,7 +56,7 @@ class JogoIA {
         }
       }
     }
-    return (melhorJogada, melhorValor);
+    return melhorJogada;
   }
 
   int calcularPontuacao(SuperJogoDaVelhaLogica jogoLogica, int linha, int coluna, int posicao) {
