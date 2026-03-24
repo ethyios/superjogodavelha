@@ -27,3 +27,6 @@ class Engine:
 
     def jogar(self, linha_macro, coluna_macro, linha_mini, coluna_mini, jogador):
         pass
+
+    def avaliar_macro_tabuleiro(self):
+        pass
