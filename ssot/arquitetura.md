@@ -33,4 +33,4 @@ O sistema nervoso de rastreamento do aplicativo.
 - Se tornará o repositório formador de *datasets* para o Módulo de IA.
 
 ---
-*Este documento é um momento canônico (V1 - Fase de Planejamento) e guia todas as implementações subsequentes.*
+*Registro adicionado ao Cânone durante o Momento Canônico V1 - Fase de Planejamento. Este documento guia todas as implementações subsequentes e não sofrerá mutação sem transição explícita.*
