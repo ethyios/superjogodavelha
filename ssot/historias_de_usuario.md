@@ -21,16 +21,24 @@ Este documento elenca as histórias de usuário divididas por Épicos. Elas abst
 - *Critério de Aceite:* A engine muda o status do mini-tabuleiro para Vencido por [X/O] permanentemente, independente se os próximos oponentes caírem nele de novo.
 
 **US1.5: 'Passe Livre' (Célula Cheia/Finalizada)**
-> "Como jogador, quero ganhar o direito de jogar em *qualquer* mini-tabuleiro aberto caso a jogada anterior do meu oponente me direcione para um mini-tabuleiro que já foi completado (sem espaços) ou já foi conquistado por alguém."
+> "Como jogador, quero ganhar o direito de jogar em *qualquer* mini-tabuleiro aberto caso a jogada anterior do meu oponente me direcione para um mini-tabuleiro que já foi completado (sem espaços, empatado) ou já foi conquistado por alguém."
 - *Critério de Aceite:* A validação de destino ignorará qualquer restrição no turno atual, contanto que o destino seja um mini-tabuleiro ainda disputável.
 
-**US1.6: Condição de Fim de Jogo**
+**US1.6: Empate ('Velha') em Mini-Tabuleiro**
+> "Como jogador, quero que o sistema reconheça quando um mini-tabuleiro 'deu velha' (9 células preenchidas sem vencedor)."
+- *Critério de Aceite:* O mini-tabuleiro muda para status "Empatado", não concedendo vitória a ninguém. Fica indisponível para jogadas e concede "Passe Livre" a quem for mandado para ele.
+
+**US1.7: Condição de Fim de Jogo (Vitória)**
 > "Como jogador, quero ganhar o jogo inteiro (Game Over) ao formar uma linha, coluna ou diagonal de mini-tabuleiros conquistados."
 - *Critério de Aceite:* A engine identifica padrões de vitória no macro-tabuleiro e imediatamente marca a partida como ENCERRADA.
 
-**US1.7: Desempate do Macro-Tabuleiro**
-> "Como jogador, quero que o ganhador seja decidido pela quantidade de mini-tabuleiros conquistados caso ocorra um empate global onde todas as jogadas finais são esgotadas sem alinhamento de 3."
-- *Critério de Aceite:* Match-Resolution avaliará o score X vs O.
+**US1.8: Empate ('Velha') no Macro-Tabuleiro**
+> "Como jogador, quero que o jogo decrete Game Over caso não seja mais possível fazer jogadas (todos os 9 mini-tabuleiros finalizados por vitória ou velha) sem que alguém forme uma trinca."
+- *Critério de Aceite:* O sistema impede novas ações e encerra o estado do jogo sob o status "Empatado".
+
+**US1.9: Desempate do Macro-Tabuleiro (Opcional)**
+> "Como jogador, ao dar velha no macro-tabuleiro, quero saber quem conquistou mais mini-tabuleiros para decidir o vencedor por pontos."
+- *Critério de Aceite:* Match-Resolution avaliará o score X vs O. Em caso de pontuações iguais nos totais de mini-tabuleiros, a partida termina num empate absoluto (Draw).
 
 ## Épico 2: Interface de Usuário (Flet)
 
