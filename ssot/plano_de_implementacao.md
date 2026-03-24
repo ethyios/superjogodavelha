@@ -5,6 +5,7 @@ Este documento define o plano para a reescrita total do Super Jogo da Velha, foc
 ## User Review Required
 
 - **Stack Tecnológica Aprovada:** 100% Python! O backend (Engine, AI, Registry) usará lógica Python otimizada e o frontend utilizará o framework **Flet**, o que nos permite desenvolver a interface gráfica do jogo inteiramente em Python e, ao mesmo tempo, garantir a portabilidade para web, desktop e **mobile** sem mudar de ecossistema. Flet é a escolha perfeita para evitar transição de contexto entre linguagens.
+- **Gerenciamento de Ambiente:** O projeto utilizará **`uv`** como ferramenta de gerenciamento de Python, ambientes virtuais e dependências (em substituição a `pip`/`venv` tradicionais).
 - **Formato SSOT:** A documentação está estruturada na pasta `ssot/` em Markdown, formando o **Cânone**. O Cânone é inalterado a menos que explicitamente solicitado, e as adições e consolidações formam os **Momentos Canônicos** nos commits do repositório.
 
 ## Proposed Changes
