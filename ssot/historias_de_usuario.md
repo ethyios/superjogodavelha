@@ -1,8 +1,5 @@
 # Histórias de Usuário (User Stories)
 
-> **⚠️ STATUS: RASCUNHO (Não-Canônico)** 
-> *Este documento é vivo e será constantemente modificado conforme as regras de negócio precisarem de deliberação. Ele só fará parte do Cânone quando as regras estiverem 100% formalizadas.*
-
 Este documento elenca as histórias de usuário divididas por Épicos. Elas abstraem os requisitos funcionais, técnicos e regras de negócio estritas que irão guiar os testes (TDD).
 
 ```mermaid

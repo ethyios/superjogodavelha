@@ -1,8 +1,5 @@
 # Casos de Uso (Use Cases)
 
-> **⚠️ STATUS: RASCUNHO (Não-Canônico)** 
-> *Este documento reflete as regras de negócio destrinchadas. Será tornado canônico junto das histórias de usuário.*
-
 Este documento dita o comportamento esperado para cada interação possível no sistema, servindo de base para testes e desenvolvimento.
 
 ## 1. Diagrama de Casos de Uso (Por Atores)

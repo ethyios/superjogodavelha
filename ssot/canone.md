@@ -22,3 +22,4 @@ gitGraph
 ## Registro Histórico de Momentos Canônicos
 
 - **[V1 - Planejamento Inicial]:** O primeiro grande marco. Estabeleceu a divisão dos 4 módulos lógicos orquestrados via TDD e definiu toda a stack em 100% Python, utilizando o framework *Flet* para unificar client Mobile, Desktop e Web.
+- **[V2 - Abstração e Regras da Engine] (Atual):** Consolidação oficial das Histórias de Usuário, Casos de Uso detalhados por atores (Mermaid) e do Livro de Regras de Negócio (State Machine e Fluxo de Validação). Isso dá o aval absoluto e embasamento necessário para o início do desenvolvimento de código do backend.
