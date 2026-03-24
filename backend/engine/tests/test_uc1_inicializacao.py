@@ -24,8 +24,11 @@ def test_engine_initializes_9_empty_miniboards():
     assert len(engine.macro_tabuleiro) == 3, "O macro-tabuleiro não tem 3 linhas"
     assert len(engine.macro_tabuleiro[0]) == 3, "O macro-tabuleiro não tem 3 colunas"
     
-    # Checa o status e as celulas do mock
-    mini_tabuleiro_central = engine.macro_tabuleiro[1][1]
-    assert mini_tabuleiro_central.status == "ATIVO", "As matrizes nao comecam no estado ATIVO"
-    assert len(mini_tabuleiro_central.celulas) == 3
-    assert mini_tabuleiro_central.celulas[0][0] == "VAZIO"
+    for linha in range(3):
+        for coluna in range(3):
+            mini = engine.macro_tabuleiro[linha][coluna]
+            assert mini.status == "ATIVO", f"Mini-tabuleiro [{linha}][{coluna}] não iniciou ATIVO"
+            assert len(mini.celulas) == 3, f"Mini-tabuleiro [{linha}][{coluna}] não tem 3 linhas de células"
+            for cl in range(3):
+                for cc in range(3):
+                    assert mini.celulas[cl][cc] == "VAZIO", f"Célula [{cl}][{cc}] do mini [{linha}][{coluna}] não está VAZIA"

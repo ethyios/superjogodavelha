@@ -46,6 +46,19 @@ def test_vitoria_global_diagonal():
     assert resultado == "VITORIA_X", "Deveria declarar vitória de X por alinhamento diagonal"
 
 
+def test_vitoria_global_diagonal_secundaria():
+    """UC6 / US1.7: Vence a partida ao alinhar 3 mini-tabuleiros na anti-diagonal."""
+    engine = Engine()
+
+    engine.macro_tabuleiro[0][2].status = "VENCIDO_O"
+    engine.macro_tabuleiro[1][1].status = "VENCIDO_O"
+    engine.macro_tabuleiro[2][0].status = "VENCIDO_O"
+
+    resultado = engine.avaliar_macro_tabuleiro()
+
+    assert resultado == "VITORIA_O", "Deveria declarar vitória de O por alinhamento anti-diagonal"
+
+
 def test_jogo_em_andamento_sem_alinhamento():
     """UC6: Enquanto houver mini-tabuleiros ATIVOS e sem alinhamento, o jogo continua."""
     engine = Engine()
