@@ -61,6 +61,6 @@ Este documento elenca as histórias de usuário divididas por Épicos. Elas abst
 
 ## Épico 4: Registry e Rastreabilidade
 
-**US4.1: Correlation de Eventos**
-> "Como mantenedor (desenvolvedor), quero que cada jogada, erro de regra, ou validação crie um registro único com payload completo do estado daquele momento."
-- *Critério de Aceite:* Falhas na API (FastAPI) originadas na Engine devem disparar um dump. O Registry exporta os objetos de erro num padrão estruturado com "Correlation ID".
+**US4.1: Payload Único e Incremental da Partida**
+> "Como mantenedor (desenvolvedor), quero que para cada partida (ou execução do sistema) exista um único payload de registro que seja continuamente incrementado com o passo-a-passo de cada jogada, erro de regra ou mudança de estado."
+- *Critério de Aceite:* No momento da inicialização do jogo, o Registry cria o escopo primário sob um "Execution/Match ID". Cada input, validação, jogada válida (State = 'Antes' e 'Depois') e exceções disparadas são apensados como eventos numa lista cronológica deste arquivo de payload único, permitindo a leitura e reprodução idêntica de toda a partida do começo ao fim.

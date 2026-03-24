@@ -65,3 +65,7 @@ Todo input (`Coordenada_Macro`, `Coordenada_Mini`) enviado para a Engine passa p
 ### 4.3. Regra de Esgotamento do Macro-Tabuleiro (Vitória por Pontos)
 - **Regra:** O "empate verdadeiro" no macro-tabuleiro não ocorre em circunstâncias normais, pois o número ímpar (9) de mini-tabuleiros garante o desempate na contagem de conquiastas. Caso o tabuleiro global esgote de movimentos sem que ninguém alinhe 3 vitórias na tela primária, a Engine entra em Modo de Pontuação.
 - **Fluxo:** A Engine conta a quantidade de Placas `VENCIDO_X` e `VENCIDO_O`. Quem tiver mais placas ganha o jogo. Um retorno de estado `EMPATE_ABSOLUTO` do Macro-Tabuleiro só existirá se a matemática de pontuações empatar estritamente devido às exceções de mini-tabuleiros que resultaram em "Velha".
+
+### 4.4. A Estrutura do Registry (Registro Contínuo)
+- **Regra:** A rastreabilidade do jogo **NÃO** gerará um pacote descentralizado de logs. Toda a execução da partida possui um Payload Único de Estado.
+- **Fluxo:** Quando o jogo inicia, a Engine abre via Registry um objeto mestre `MatchPayload` (ou `ExecutionPayload`). Todo e qualquer evento (Jogada bem-sucedida, Jogada Inválida, Troca de Status, Exceptions da Engine ou demora de processamento da IA) é "appendado" como um step incremental na *timeline* desse payload. No encerramento da partida, o arquivo consolidado será salvo. Isso formará a base de treinamento da futura IA (pois contém a árvore de estado de todas as tomadas de decisão daquela partida em um só container legal).
