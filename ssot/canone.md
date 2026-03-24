@@ -9,6 +9,16 @@ O Cânone é o acervo de todos os documentos fundamentais da arquitetura, regras
 ## O que são os 'Momentos Canônicos'?
 Os Momentos Canônicos são os **commits** (e *tags* de repositório) feitos com o propósito exclusivo de adicionar ou consolidar mudanças no Cânone. Eles representam a linha do tempo da evolução oficial do nosso projeto.
 
+```mermaid
+gitGraph
+    commit id: "Início do Repositório"
+    branch rewrite
+    checkout rewrite
+    commit id: "Momento Canônico V1" tag: "ssot-v1.0"
+    commit id: "Trabalho em Rascunhos (Não-Canônico)..."
+    commit id: "Consolidação de Regras (Futuro Momento Canônico)" type: HIGHLIGHT
+```
+
 ## Registro Histórico de Momentos Canônicos
 
 - **[V1 - Planejamento Inicial]:** O primeiro grande marco. Estabeleceu a divisão dos 4 módulos lógicos orquestrados via TDD e definiu toda a stack em 100% Python, utilizando o framework *Flet* para unificar client Mobile, Desktop e Web.

@@ -7,6 +7,24 @@ Este documento descreve a arquitetura geral da reescrita do sistema.
 
 O sistema foi redesenhado para ter baixo acoplamento e alta coesão, dividido em 4 módulos principais:
 
+```mermaid
+graph TD
+    subgraph Frontend
+        UI[Interface Flet]
+    end
+    subgraph Backend
+        E[Engine Core]
+        AI[AI Model]
+        REG[Registry]
+    end
+    UI -->|1. Envia Coordenadas de Jogada| E
+    E -->|2. Valida & Aplica Regras| E
+    E -->|3. Retorna Novo Estado do Tabuleiro| UI
+    E -->|4. Solicita Jogada do Computador| AI
+    AI -->|5. Devolve Melhor Movimento| E
+    E -->|6. Rastreia Todo o Fluxo Passo a Passo| REG
+```
+
 ### 1. Engine
 O coração matemático e lógico do jogo. 
 - Gerencia a matriz 9x9 (os 9 mini-tabuleiros).

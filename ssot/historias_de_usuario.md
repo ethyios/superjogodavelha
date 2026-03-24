@@ -5,6 +5,14 @@
 
 Este documento elenca as histórias de usuário divididas por Épicos. Elas abstraem os requisitos funcionais, técnicos e regras de negócio estritas que irão guiar os testes (TDD).
 
+```mermaid
+flowchart LR
+    E1[Épico 1: Engine & Regras] <-->|Inputs & Render| E2[Épico 2: Interface]
+    E1 <-->|Observa & Joga| E3[Épico 3: Inteligência Artificial]
+    E1 -.->|Salva Timeline Incremental| E4[Épico 4: Registry]
+    E4 -.->|Extrai Datasets Futuros| E3
+```
+
 ## Épico 1: A Engine e as Regras de Negócio (Core)
 
 **US1.1: Inicialização**

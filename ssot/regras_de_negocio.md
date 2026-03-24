@@ -11,10 +11,17 @@ Este documento dita o comportamento matemático e lógico inflexível que será 
 
 ### 2.1 Mini-Tabuleiro (Estado Isolado)
 Cada mini-tabuleiro individual só pode estar em um dos 4 estados abaixo:
-1. `ATIVO`: Jogo está correndo, possui casas vazias e nenhum jogador fez linha/trinca.
-2. `VENCIDO_X`: Jogador X fez uma linha.
-3. `VENCIDO_O`: Jogador O fez uma linha.
-4. `EMPATADO` ("Velha"): Nenhuma linha foi feita e não há mais espaços vazios (9 jogadas ocorreram).
+
+```mermaid
+stateDiagram-v2
+    [*] --> ATIVO : Partida Iniciada
+    ATIVO --> VENCIDO_X : Alinhamento Triplo (X)
+    ATIVO --> VENCIDO_O : Alinhamento Triplo (O)
+    ATIVO --> EMPATADO : 9 células preenchidas (Velha)
+    VENCIDO_X --> [*] : Fim do Mini
+    VENCIDO_O --> [*] : Fim do Mini
+    EMPATADO --> [*]  : Fim do Mini
+```
 
 *Ordem de Avaliação:* Logo após um input, a Engine verifica `Vitória`. Se houver linha, vira `VENCIDO`. Se não houver linha E o espaço está cheio, vira `EMPATADO`.
 
@@ -22,11 +29,34 @@ Cada mini-tabuleiro individual só pode estar em um dos 4 estados abaixo:
 1. `EM_ANDAMENTO`: Jogo corrente em turnos alternados.
 2. `VITORIA_X`: X alinhou 3 mini-tabuleiros que estão em estado `VENCIDO_X`.
 3. `VITORIA_O`: O alinhou 3 mini-tabuleiros que estão em estado `VENCIDO_O`.
-4. `EMPATE`: Todos os 9 mini-tabuleiros saíram do estado `ATIVO` e nenhum alinhamento principal ocorreu.
+4. `EMPATE_ABSOLUTO`: Todos os 9 mini-tabuleiros saíram do estado `ATIVO` e as pontuações entre vitórias X e O deram idênticas.
 
 ## 3. Fluxo de Validação de Jogada
 
-Todo input (`Coordenada_Macro`, `Coordenada_Mini`) enviado para a Engine passa pelo seguinte pipeline:
+Todo input (`Coordenada_Macro`, `Coordenada_Mini`) enviado para a Engine passa pelo seguinte pipeline restrito:
+
+```mermaid
+flowchart TD
+    Inicio([Recebe Jogada]) --> Turno{É a vez certa?}
+    Turno -- N --> Err([Erro: Not Your Turn])
+    Turno -- S --> Rest{Respeitou Destino Obrigatório?}
+    Rest -- N --> Err
+    Rest -- S --> Cell{Célula Vazia?}
+    Cell -- N --> Err
+    Cell -- S --> Aplica[Marca Símbolo]
+    
+    Aplica --> Win{Alinhou 3 ou encheu?}
+    Win -- S --> Muda[Atualiza Status do Mini-Tabuleiro]
+    Win -- N --> Proxy[Prepara Próximo Turno]
+    Muda --> Proxy
+    
+    Proxy --> Destino{Destino no Próximo\nMini-tabuleiro\né Válido?}
+    Destino -- S --> Lock[Restringe o próximo\njogador a esse destino]
+    Destino -- N --> Livre[Desbloqueia a restrição:\nPasse Livre gerado]
+    
+    Lock --> Fim([Troca a Vez])
+    Livre --> Fim
+```
 
 **Passo 1: Verificação de Turno**
 - É a vez de quem enviou a jogada? Se não, lance `NotYourTurnException`.
