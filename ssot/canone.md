@@ -11,4 +11,4 @@ Os Momentos Canônicos são os **commits** (e *tags* de repositório) feitos com
 
 ## Registro Histórico de Momentos Canônicos
 
-- **[V1 - Planejamento Inicial] (Atual):** O primeiro grande marco. Estabeleceu a divisão dos 4 módulos lógicos orquestrados via TDD e definiu toda a stack em 100% Python, utilizando o framework *Flet* para unificar client Mobile, Desktop e Web.
+- **[V1 - Planejamento Inicial]:** O primeiro grande marco. Estabeleceu a divisão dos 4 módulos lógicos orquestrados via TDD e definiu toda a stack em 100% Python, utilizando o framework *Flet* para unificar client Mobile, Desktop e Web.

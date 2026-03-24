@@ -1,5 +1,8 @@
 # Histórias de Usuário (User Stories)
 
+> **⚠️ STATUS: RASCUNHO (Não-Canônico)** 
+> *Este documento é vivo e será constantemente modificado conforme as regras de negócio precisarem de deliberação. Ele só fará parte do Cânone quando as regras estiverem 100% formalizadas.*
+
 Este documento elenca as histórias de usuário divididas por Épicos. Elas abstraem os requisitos funcionais, técnicos e regras de negócio estritas que irão guiar os testes (TDD).
 
 ## Épico 1: A Engine e as Regras de Negócio (Core)
@@ -32,13 +35,17 @@ Este documento elenca as histórias de usuário divididas por Épicos. Elas abst
 > "Como jogador, quero ganhar o jogo inteiro (Game Over) ao formar uma linha, coluna ou diagonal de mini-tabuleiros conquistados."
 - *Critério de Aceite:* A engine identifica padrões de vitória no macro-tabuleiro e imediatamente marca a partida como ENCERRADA.
 
-**US1.8: Empate ('Velha') no Macro-Tabuleiro**
-> "Como jogador, quero que o jogo decrete Game Over caso não seja mais possível fazer jogadas (todos os 9 mini-tabuleiros finalizados por vitória ou velha) sem que alguém forme uma trinca."
-- *Critério de Aceite:* O sistema impede novas ações e encerra o estado do jogo sob o status "Empatado".
+**US1.8: Fim de Jogo sem Alinhamento (Vitória por Pontos)**
+> "Como jogador, quero que a partida termine se não houver mais jogadas válidas (todos os 9 mini-tabuleiros finalizados) e que o vencedor seja aquele que conquistou a maior quantidade de mini-tabuleiros."
+- *Critério de Aceite:* Se for impossível formar trincas e o jogo esgotar, a Engine conta o número de tabuleiros `VENCIDO_X` vs `VENCIDO_O` e declara o dono da maior pontuação como o vencedor absoluto da Partida. O empate absoluto só ocorrerá na raríssima exceção de um score igualitário causado por mini-tabuleiros que terminaram em "Velha".
 
-**US1.9: Desempate do Macro-Tabuleiro (Opcional)**
-> "Como jogador, ao dar velha no macro-tabuleiro, quero saber quem conquistou mais mini-tabuleiros para decidir o vencedor por pontos."
-- *Critério de Aceite:* Match-Resolution avaliará o score X vs O. Em caso de pontuações iguais nos totais de mini-tabuleiros, a partida termina num empate absoluto (Draw).
+**US1.10: Jogador Inicial Fixo**
+> "Como jogador, sei que quem joga com o 'X' tem sempre a vantagem do primeiro movimento."
+- *Critério de Aceite:* A engine sempre inicia o estado da partida aguardando o input do jogador 'X'. Não há sorteio na engine.
+
+**US1.11: Tolerância a Erros de Input**
+> "Como jogador, se eu clicar num lugar inválido ou tentar burlar a regra, quero que a jogada seja apenas recusada, sem que eu perca a minha vez."
+- *Critério de Aceite:* Inputs inválidos disparam exceções (`InvalidMoveException` ou similares). O estado do jogo (e de quem é a vez) não avança até que uma coordenada válida seja enviada.
 
 ## Épico 2: Interface de Usuário (Flet)
 
