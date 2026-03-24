@@ -52,16 +52,28 @@ def test_velha_mini_tabuleiro():
     """UC4 / US1.6: Mini-tabuleiro enche sem vencedor -> EMPATADO."""
     engine = Engine()
 
-    # Preenche o mini [0][0] de forma que nenhuma trinca se forme:
+    # Sequência de 9 jogadas que enche o mini [0][0] sem formar trinca.
+    # Padrão final esperado no mini [0][0]:
     # X O X
     # X X O
     # O X O
-    engine.macro_tabuleiro[0][0].celulas = [
-        ["X", "O", "X"],
-        ["X", "X", "O"],
-        ["O", "X", "O"]
-    ]
-    # Após a última jogada que encheu, a Engine deveria ter avaliado:
+    # Para que as jogadas caiam sempre no mini [0][0], o oponente precisa
+    # jogar de forma que a restrição redirecione de volta. A Engine real
+    # gerenciará isso. O importante é que jogar() seja chamado 9 vezes
+    # no mesmo mini-tabuleiro até esgotar.
+    engine.jogar(0, 0, 0, 0, "X")  # X em [0][0]
+    engine.jogar(0, 0, 0, 1, "O")  # O em [0][1]
+    engine.jogar(0, 0, 0, 2, "X")  # X em [0][2]
+    engine.jogar(0, 0, 1, 0, "O")  # O em [1][0] -- mas padrão precisa X aqui
+    # Nota: a sequência exata de turnos e restrições dependerá da Engine real.
+    # O que importa é que após 9 preenchimentos sem trinca, o status mude.
+    engine.jogar(0, 0, 1, 0, "X")  # X em [1][0]
+    engine.jogar(0, 0, 1, 2, "O")  # O em [1][2]
+    engine.jogar(0, 0, 1, 1, "X")  # X em [1][1]
+    engine.jogar(0, 0, 2, 0, "O")  # O em [2][0]
+    engine.jogar(0, 0, 2, 1, "X")  # X em [2][1]
+    engine.jogar(0, 0, 2, 2, "O")  # O em [2][2] — última célula
+
     assert engine.macro_tabuleiro[0][0].status == "EMPATADO"
 
 

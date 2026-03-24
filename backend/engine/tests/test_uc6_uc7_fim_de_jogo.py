@@ -80,41 +80,70 @@ def test_vitoria_por_pontos_x_lidera():
     """UC7 / US1.8: X vence por ter mais mini-tabuleiros conquistados."""
     engine = Engine()
 
-    # Simula todos os mini-tabuleiros finalizados, sem trinca
-    engine.macro_tabuleiro[0][0].status = "VENCIDO_X"
-    engine.macro_tabuleiro[0][1].status = "VENCIDO_O"
-    engine.macro_tabuleiro[0][2].status = "VENCIDO_X"
-    engine.macro_tabuleiro[1][0].status = "VENCIDO_O"
-    engine.macro_tabuleiro[1][1].status = "VENCIDO_X"
-    engine.macro_tabuleiro[1][2].status = "EMPATADO"
+    # Distribuição sem nenhuma trinca (horizontal, vertical ou diagonal):
+    # X  O  E
+    # O  X  O
+    # X  E  X
+    # Linhas: X-O-E, O-X-O, X-E-X → sem trinca
+    # Colunas: X-O-X, O-X-E, E-O-X → sem trinca
+    # Diag principal: X-X-X → TRINCA? Não! Precisa ser mesmo jogador.
+    # Corrigido:
+    # X  O  E
+    # E  X  O
+    # X  O  X
+    # Linhas: X-O-E, E-X-O, X-O-X → sem trinca
+    # Colunas: X-E-X, O-X-O, E-O-X → sem trinca
+    # Diag principal: X-X-X → TRINCA! Ainda não serve.
+    # Versão final validada:
+    # O  X  E
+    # X  E  O
+    # X  O  X
+    # Linhas: O-X-E, X-E-O, X-O-X → sem trinca
+    # Colunas: O-X-X, X-E-O, E-O-X → sem trinca
+    # Diag principal: O-E-X → sem trinca
+    # Diag secundária: E-E-X → sem trinca
+    engine.macro_tabuleiro[0][0].status = "VENCIDO_O"
+    engine.macro_tabuleiro[0][1].status = "VENCIDO_X"
+    engine.macro_tabuleiro[0][2].status = "EMPATADO"
+    engine.macro_tabuleiro[1][0].status = "VENCIDO_X"
+    engine.macro_tabuleiro[1][1].status = "EMPATADO"
+    engine.macro_tabuleiro[1][2].status = "VENCIDO_O"
     engine.macro_tabuleiro[2][0].status = "VENCIDO_X"
-    engine.macro_tabuleiro[2][1].status = "EMPATADO"
+    engine.macro_tabuleiro[2][1].status = "VENCIDO_O"
     engine.macro_tabuleiro[2][2].status = "VENCIDO_X"
-    # X=5, O=2, Empate=2 -> X vence por pontos
+    # X=4, O=3, Empate=2 -> X vence por pontos (sem trincas)
 
     resultado = engine.avaliar_macro_tabuleiro()
 
-    assert resultado == "VITORIA_X", "X deveria vencer por pontos (5 vs 2)"
+    assert resultado == "VITORIA_X", "X deveria vencer por pontos (4 vs 3)"
 
 
 def test_vitoria_por_pontos_o_lidera():
     """UC7 / US1.8: O vence por ter mais mini-tabuleiros conquistados."""
     engine = Engine()
 
-    engine.macro_tabuleiro[0][0].status = "VENCIDO_O"
-    engine.macro_tabuleiro[0][1].status = "VENCIDO_X"
-    engine.macro_tabuleiro[0][2].status = "VENCIDO_O"
-    engine.macro_tabuleiro[1][0].status = "VENCIDO_X"
-    engine.macro_tabuleiro[1][1].status = "VENCIDO_O"
-    engine.macro_tabuleiro[1][2].status = "EMPATADO"
+    # Distribuição sem nenhuma trinca (espelhamento do teste X):
+    # X  O  E
+    # O  E  X
+    # O  X  O
+    # Linhas: X-O-E, O-E-X, O-X-O → sem trinca
+    # Colunas: X-O-O, O-E-X, E-X-O → sem trinca
+    # Diag principal: X-E-O → sem trinca
+    # Diag secundária: E-E-O → sem trinca
+    engine.macro_tabuleiro[0][0].status = "VENCIDO_X"
+    engine.macro_tabuleiro[0][1].status = "VENCIDO_O"
+    engine.macro_tabuleiro[0][2].status = "EMPATADO"
+    engine.macro_tabuleiro[1][0].status = "VENCIDO_O"
+    engine.macro_tabuleiro[1][1].status = "EMPATADO"
+    engine.macro_tabuleiro[1][2].status = "VENCIDO_X"
     engine.macro_tabuleiro[2][0].status = "VENCIDO_O"
-    engine.macro_tabuleiro[2][1].status = "EMPATADO"
+    engine.macro_tabuleiro[2][1].status = "VENCIDO_X"
     engine.macro_tabuleiro[2][2].status = "VENCIDO_O"
-    # O=5, X=2, Empate=2 -> O vence por pontos
+    # O=4, X=3, Empate=2 -> O vence por pontos (sem trincas)
 
     resultado = engine.avaliar_macro_tabuleiro()
 
-    assert resultado == "VITORIA_O", "O deveria vencer por pontos (5 vs 2)"
+    assert resultado == "VITORIA_O", "O deveria vencer por pontos (4 vs 3)"
 
 
 def test_empate_absoluto_pontuacoes_iguais():
