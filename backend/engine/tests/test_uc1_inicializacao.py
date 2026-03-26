@@ -3,7 +3,7 @@ from backend.engine.engine_mockup import Engine
 
 def test_engine_initializes_with_player_x():
     """
-    US1.10 / Regra 4.1: O primeiro jogador deve ser o 'X'
+    US1.9 / Regra 4.1: O primeiro jogador deve ser o 'X'
     """
     engine = Engine()
     assert engine.turno_atual == "X", "A partida não iniciou com o jogador X"

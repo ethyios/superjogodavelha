@@ -4,7 +4,7 @@ Este documento dita o comportamento esperado para cada interação possível no 
 
 ## 1. Diagrama de Casos de Uso (Por Atores)
 
-O sistema possui três Atores principais: O **Jogador Humano** (através da Interface Flet), a **Inteligência Artificial** e a **Engine/Registry** (O pr óprio sistema).
+O sistema possui três Atores principais: O **Jogador Humano** (através da Interface Flet), a **Inteligência Artificial** e a **Engine/Registry** (O próprio sistema).
 
 ```mermaid
 flowchart LR
@@ -12,32 +12,59 @@ flowchart LR
     H((Jogador\nHumano))
     IA((Inteligência\nArtificial))
     S((Engine &\nRegistry))
+    I((Interface\nFlet))
 
-    %% Casos
-    UC1([Iniciar Partida])
-    UC2([Tentar Jogada Inválida])
-    UC3([Realizar Jogada Válida])
-    UC4([Avaliar Estado e Trincas])
-    UC5([Resolver Fim de Jogo])
-    UC6([Gravar Timeline Payload])
+    %% Casos de Uso — Mecânica
+    UC1([UC1: Iniciar Partida])
+    UC2([UC2: Tentar Jogada Inválida])
+    UC3([UC3: Realizar Jogada Válida])
+    UC4([UC4: Vitória ou Velha no Mini])
+    UC5([UC5: Passe Livre])
+    UC6([UC6: Alinhamento Global])
+    UC7([UC7: Esgotamento e Pontos])
+
+    %% Casos de Uso — IA e Registry
+    UC8([UC8: Solicitar Jogada à IA])
+    UC9([UC9: Abrir/Fechar Payload])
+    UC10([UC10: Registrar Evento])
+
+    %% Casos de Uso — Interface
+    UC11([UC11: Renderizar Estado])
+    UC12([UC12: Capturar Input])
+    UC13([UC13: Feedback Visual])
 
     %% Relações Humano
+    H -->|Clique/Toque| I
+    I --> UC12
+    UC12 -->|Coordenadas| S
     H --> UC1
-    H --> UC2
-    H --> UC3
 
     %% Relações IA
     IA --> UC2
     IA --> UC3
+    S -->|Turno da IA| UC8
+    UC8 -->|Snapshot Público| IA
+    IA -->|Tupla de Jogada| UC3
 
     %% Relações Sistema
-    UC1 -.->|Inicializa Payload| S
     UC1 -.->|Força 'X' Iniciar| S
-    UC2 -.->|Recusa e Lança Exceção| S
-    UC3 -.->|Aceita e Aplica Regra| S
+    UC1 -.-> UC9
+    UC2 -.->|Recusa| S
+    UC2 -.-> UC13
+    UC3 -.->|Aceita e Aplica| S
+    UC3 -.-> UC10
+    UC2 -.-> UC10
     S --> UC4
-    UC4 --> UC5
-    S --> UC6
+    UC4 -->|Destino Inválido| UC5
+    UC4 -->|Trinca no Macro| UC6
+    UC4 -->|Sem Ativos Restantes| UC7
+    UC6 -.-> UC9
+    UC7 -.-> UC9
+
+    %% Relações Interface
+    S -.->|Novo Estado| UC11
+    UC11 -.-> I
+    UC13 -.-> I
 ```
 
 ## 2. Casos de Uso Principais (Mecânica e Regras)
@@ -75,4 +102,46 @@ flowchart LR
 **UC7: Encerramento por Esgotamento (Vitória por Pontos / Empate Absoluto)**
 - **Ator:** Sistema.
 - **Fluxo:** O Ator encerra um mini-tabuleiro com Empate ou Vitória, porém não há trinca principal, E simultaneamente não existe mais nenhum mini-tabuleiro `ATIVO` restante no jogo inteiro.
-- **Resultado Estrito:** A Engine compara countages `VENCIDO_X` vs `VENCIDO_O`. Declara vitória do número maior. Caso sejam estritamente idênticos (apenas possível devido aos empates de placa), decreta `EMPATE_ABSOLUTO`. Registry fecha arquivo Payload.
+- **Resultado Estrito:** A Engine compara contagens `VENCIDO_X` vs `VENCIDO_O`. Declara vitória do número maior. Caso sejam estritamente idênticos (apenas possível devido aos empates de placa), decreta `EMPATE_ABSOLUTO`. Registry fecha arquivo Payload.
+
+## 3. Casos de Uso da Inteligência Artificial
+
+**UC8: Solicitação de Jogada à IA**
+- **Ator:** Engine → IA.
+- **Fluxo:** A Engine detecta que o `turno_atual` pertence ao jogador controlado pela IA. Ela exporta um snapshot público serializável do estado (macro-tabuleiro, turno, restrição) para o módulo AI. A IA avalia o estado segundo sua hierarquia heurística (§5.2 das Regras) e retorna uma tupla `(linha_macro, coluna_macro, linha_mini, coluna_mini)`.
+- **Resultado Estrito:** A jogada retornada é submetida ao mesmo `jogar()` que o humano usa. Se válida, segue o fluxo normal (UC3). Se inválida (bug), a Engine recusa silenciosamente e a IA tenta novamente. A Interface segura a resposta por mínimo 0.5s com feedback visual de "pensando" (desativável por configuração de partida).
+
+## 4. Casos de Uso do Registry
+
+**UC9: Abertura e Fechamento do Payload**
+- **Ator:** Registry.
+- **Fluxo de Abertura:** No momento da inicialização da partida (UC1), o Registry cria o `MatchPayload` com `match_id` (UUID), `timestamp_inicio`, `modo` da partida e `timeline` vazia.
+- **Fluxo de Fechamento:** Ao ocorrer UC6 (Alinhamento Global) ou UC7 (Esgotamento), o Registry preenche `timestamp_fim` e `resultado_final`, e persiste o arquivo consolidado.
+- **Resultado Estrito:** Cada partida gera exatamente um arquivo `match_{uuid}.json` seguindo o schema definido em Regras §6.2.
+
+**UC10: Registro de Evento na Timeline**
+- **Ator:** Registry (disparado pela Engine).
+- **Fluxo:** A cada ação relevante (jogada válida, jogada inválida, mudança de status de mini, mudança de status macro, erro de sistema), a Engine notifica o Registry. O Registry appenda um evento com `step_number`, `timestamp`, `tipo`, `jogador` e `dados` na `timeline` do payload ativo.
+- **Resultado Estrito:** O payload é persistido incrementalmente (write-ahead). Nenhum evento é perdido mesmo em caso de crash. O Registry **nunca** altera o fluxo do jogo — apenas observa e registra.
+
+## 5. Casos de Uso da Interface
+
+**UC11: Renderização de Estado**
+- **Ator:** Interface (disparado pela Engine).
+- **Fluxo:** A cada mudança de estado da Engine (jogada aceita, status de mini alterado, turno trocado, jogo encerrado), a Interface recebe o novo snapshot e re-renderiza todos os componentes afetados: tabuleiro, indicador de turno, placar de conquistas, destaques de minis permitidos.
+- **Resultado Estrito:** O estado visual reflete fielmente o estado lógico da Engine em tempo real. A Interface não interpreta regras — apenas exibe. (Regras §7.1, §7.2)
+
+**UC12: Captura e Envio de Input do Jogador**
+- **Ator:** Jogador Humano → Interface → Engine.
+- **Fluxo:** O jogador clica (desktop) ou toca (mobile) em uma célula do tabuleiro. A Interface captura as coordenadas `(linha_macro, coluna_macro, linha_mini, coluna_mini)` e as encaminha à Engine via `jogar()`. A Interface **não** valida se a jogada é legal — apenas captura e envia.
+- **Resultado Estrito:** Se a Engine aceita (UC3), o estado é atualizado e re-renderizado (UC11). Se a Engine recusa (UC2), a Interface aplica feedback visual de recusa (UC13).
+
+**UC13: Feedback Visual de Eventos**
+- **Ator:** Interface.
+- **Fluxo:** A Interface aplica feedback visual em resposta a eventos da Engine:
+  - **Jogada recusada:** Shake sutil + flash vermelho (~200ms). Em mobile, vibração haptic leve.
+  - **Mini conquistado:** Animação de símbolo vencedor surgindo com opacidade ~40-50%.
+  - **Mini empatado:** Animação do "V" de Velha surgindo.
+  - **IA pensando:** Indicador de loading durante o delay (mínimo 0.5s).
+  - **Fim de jogo:** Overlay/modal de resultado com placar e opções.
+- **Resultado Estrito:** Feedback é sempre sutil e não-bloqueante. Nunca interrompe o fluxo do jogo. (Regras §7.3, §7.7)

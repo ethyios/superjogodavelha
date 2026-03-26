@@ -1,7 +1,7 @@
 # Documento de Teste: UC1 - Inicialização
 
 ## Referência Base
-- **Histórias de Usuário:** US1.1, US1.10
+- **Histórias de Usuário:** US1.1, US1.9
 - **Caso de Uso:** UC1
 
 ## Objetivo

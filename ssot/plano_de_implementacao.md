@@ -35,21 +35,43 @@ A reescrita dividirá o sistema nos 4 módulos exigidos, sendo orquestrados da s
 
 ---
 
-### Estrutura de Diretórios Inicial Proposta (Visão Macro)
+### Estrutura de Diretórios
 
+#### Estado Atual
 ```text
-superjogodavelha-rewrite/
-├── ssot/                 # (Biblioteca Single Source of Truth)
+superjogodavelha/
+├── ssot/                     # Biblioteca Single Source of Truth (Cânone)
+│   ├── canone.md
 │   ├── arquitetura.md
-│   ├── momentos_canonicos/
-│   └── modulos/
-├── backend/              # Engine, AI e Registry
-│   ├── engine/
-│   ├── ai/
-│   ├── registry/
-│   └── api/              # FastAPI endpoints que conectam Engine <-> Interface
-└── frontend/             # Interface
-    └── main.py           # Ponto de entrada do aplicativo Flet
+│   ├── regras_de_negocio.md
+│   ├── casos_de_uso.md
+│   ├── historias_de_usuario.md
+│   ├── plano_de_implementacao.md
+│   └── testes/               # Specs de teste (documentação TDD)
+│       ├── teste_uc1_inicializacao.md
+│       ├── teste_uc2_uc3_jogadas.md
+│       ├── teste_uc4_uc5_minitabuleiro.md
+│       └── teste_uc6_uc7_fim_de_jogo.md
+└── backend/
+    └── engine/
+        ├── engine_mockup.py  # Mockup estrutural (TDD Phase)
+        └── tests/            # Suítes de teste pytest
+            ├── test_uc1_inicializacao.py
+            ├── test_uc2_uc3_jogadas.py
+            ├── test_uc4_uc5_minitabuleiro.py
+            └── test_uc6_uc7_fim_de_jogo.py
+```
+
+#### Módulos Futuros (Planejados)
+```text
+superjogodavelha/
+├── backend/
+│   ├── engine/               # (já existe)
+│   ├── ai/                   # Módulo de Inteligência Artificial
+│   ├── registry/             # Módulo de Rastreabilidade
+│   └── api/                  # FastAPI: Engine <-> Interface
+└── frontend/
+    └── main.py               # Ponto de entrada Flet
 ```
 
 ## Verification Plan
