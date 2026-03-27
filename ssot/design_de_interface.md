@@ -64,6 +64,14 @@ flowchart LR
 
 > **Nota:** A paleta final é flexível e pode ser ajustada durante a implementação. O importante é manter consistência e contraste.
 
+### 2.2. Política de Tema
+
+O aplicativo segue **automaticamente** a preferência de tema do sistema operacional (claro ou escuro). Não há toggle manual.
+
+- A paleta de cores é **gerada dinamicamente** com base na cor do tema do sistema, de forma análoga ao aplicativo de Configurações nativo do dispositivo.
+- Os valores fixos da tabela acima (Jogador X, Jogador O, Flash de recusa, etc.) são mantidos como âncoras, enquanto fundos, bordas e superfícies adaptam-se automaticamente ao tema.
+- O Flet oferece suporte nativo a `ThemeMode.SYSTEM` para essa finalidade.
+
 ## 3. Estados Visuais do Mini-Tabuleiro
 
 ```mermaid
@@ -196,6 +204,70 @@ graph TD
 │                             │
 └─────────────────────────────┘
 ```
+
+### 6.5. Tela de Onboarding ("Como Jogar")
+
+```
+┌─────────────────────────────┐
+│  ← Como Jogar               │
+├─────────────────────────────┤
+│                             │
+│  O Super Jogo da Velha é    │
+│  um tabuleiro 3×3 de        │
+│  mini-tabuleiros 3×3.       │
+│                             │
+│  ┌───┬───┬───┐              │
+│  │ · │ · │ · │  ← Macro     │
+│  ├───┼───┼───┤              │
+│  │ · │[·]│ · │  ← Mini      │
+│  ├───┼───┼───┤              │
+│  │ · │ · │ · │              │
+│  └───┴───┴───┘              │
+│                             │
+│  ──── Regra de Ouro ─────   │
+│  Sua jogada define ONDE o   │
+│  oponente deve jogar.       │
+│                             │
+│  ──── Passe Livre ───────   │
+│  Se o destino já estiver    │
+│  finalizado, jogue onde     │
+│  quiser.                    │
+│                             │
+│  ──── Conquista ─────────   │
+│  Alinhe 3 no mini para      │
+│  conquistá-lo.              │
+│                             │
+│  ──── Vitória ───────────   │
+│  Alinhe 3 minis no macro    │
+│  para vencer a partida.     │
+│                             │
+└─────────────────────────────┘
+```
+
+- Layout scrollável em tela única
+- Cada conceito (Regra de Ouro, Passe Livre, Conquista, Vitória) é uma seção separada com breve explicação textual
+- O botão "←" no AppBar é provido automaticamente pelo Flet (`automatically_imply_leading`) e retorna ao Menu
+
+### 6.6. Prompt de Saída Mid-Game
+
+Durante a Tela de Jogo, se o jogador acionar o botão de voltar ("←" do AppBar ou gesto de retorno do sistema), a Interface exibe um **diálogo de confirmação** antes de descartar a partida:
+
+```
+┌─────────────────────────────┐
+│                             │
+│    Sair da partida?         │
+│                             │
+│    O progresso atual será   │
+│    perdido.                 │
+│                             │
+│   [ CANCELAR ]  [ SAIR ]   │
+│                             │
+└─────────────────────────────┘
+```
+
+- **CANCELAR:** Fecha o diálogo e retorna à partida em andamento
+- **SAIR:** Descarta a partida (sem registro no Registry) e retorna ao Menu
+- O prompt intercepta o `on_view_pop` da view de Jogo
 
 ## 7. Animações e Transições
 
